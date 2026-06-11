@@ -2,7 +2,7 @@
 - [Русский](README.ru.md)
 
 <p align="center">
- <img src=".github/assets/images/logos/SSClashR.svg" width="200">
+ <img src=".github/assets/images/logos/SSClash.png" width="200">
 </p>
 
 <h3 align="center">Here's the step-by-step process for installing and configuring SSClash on your OpenWrt router</h3>
