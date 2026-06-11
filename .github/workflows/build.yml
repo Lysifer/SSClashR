@@ -112,6 +112,10 @@ jobs:
           set -euo pipefail
           mkdir -p release_files
           find artifacts -type f \( -name "*.ipk" -o -name "*.apk" \) -exec cp {} release_files/ \;
+          (
+            cd release_files
+            sha256sum *.ipk *.apk 2>/dev/null | sort -k2 > sha256sums.txt
+          )
           ls -lah release_files/
           
       - name: Generate Combined Release Notes

@@ -7,6 +7,7 @@
 # ================================================================
 
 SSCLASH_API="https://api.github.com/repos/Lysifer/SSClashR/releases/latest"
+MIHOMO_API="https://api.github.com/repos/MetaCubeX/mihomo/releases/latest"
 MIHOMO_BASE="https://github.com/MetaCubeX/mihomo/releases"
 CLASH_BIN="/opt/clash/bin/clash"
 
@@ -14,6 +15,7 @@ CLASH_BIN="/opt/clash/bin/clash"
 SSCLASH_VER=""
 SSCLASH_APK_URL=""
 SSCLASH_IPK_URL=""
+SSCLASH_SHA256_URL=""
 PKG_UPDATED=0   # станет 1, если ensure_curl() уже обновил индекс
 
 # ── цвета ───────────────────────────────────────────────────────
@@ -29,6 +31,46 @@ info() { printf "%s[i]%s %s\n" "$C" "$N" "$*"; }
 warn() { printf "%s[!]%s %s\n" "$Y" "$N" "$*"; }
 die()  { printf "%s[✗] %s%s\n" "$R" "$*" "$N" >&2; exit 1; }
 sep()  { printf "%s%s%s\n"     "$C" "────────────────────────────────────────" "$N"; }
+
+CURL_OPTS="-fL --retry 3 --connect-timeout 15 --max-time 180"
+
+download_file() {
+    url="$1"
+    output="$2"
+
+    rm -f "$output"
+    curl $CURL_OPTS "$url" -o "$output"
+}
+
+verify_sha256_file() {
+    file="$1"
+    sums_url="$2"
+
+    [ -s "$file" ] || die "Загруженный файл пустой: $file"
+
+    if ! command -v sha256sum >/dev/null 2>&1; then
+        warn "sha256sum недоступен — пропускаю проверку SHA256"
+        return 0
+    fi
+
+    if [ -z "$sums_url" ]; then
+        warn "В релизе нет sha256sums.txt — пропускаю проверку SHA256"
+        return 0
+    fi
+
+    sums_file="/tmp/ssclash-sha256sums.txt"
+    download_file "$sums_url" "$sums_file" || die "Не удалось загрузить sha256sums.txt"
+
+    expected=$(grep -F "  ${file##*/}" "$sums_file" | head -1 | awk '{print $1}')
+    [ -n "$expected" ] || expected=$(grep -F " *${file##*/}" "$sums_file" | head -1 | awk '{print $1}')
+    [ -n "$expected" ] || die "В sha256sums.txt нет записи для ${file##*/}"
+
+    actual=$(sha256sum "$file" | awk '{print $1}')
+    [ "$actual" = "$expected" ] || die "SHA256 не совпал для ${file##*/}"
+
+    rm -f "$sums_file"
+    log "SHA256 проверен: ${file##*/}"
+}
 
 # ================================================================
 #  0. Гарантируем наличие curl
@@ -182,7 +224,7 @@ fetch_ssclash_release() {
     log "Определяю последнюю версию SSClash..."
 
     # GitHub API возвращает JSON; парсим grep+sed — без jq (его нет в OpenWrt по умолчанию)
-    RELEASE_JSON=$(curl -s -L "$SSCLASH_API") \
+    RELEASE_JSON=$(curl -fsSL --retry 3 --connect-timeout 15 --max-time 60 "$SSCLASH_API") \
         || die "Не удалось получить данные релиза SSClash"
 
     [ -z "$RELEASE_JSON" ] && die "GitHub API вернул пустой ответ"
@@ -207,6 +249,11 @@ fetch_ssclash_release() {
         | grep '\.ipk"' | head -1 \
         | sed 's/.*"browser_download_url"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
 
+    SSCLASH_SHA256_URL=$(printf '%s' "$RELEASE_JSON" \
+        | grep '"browser_download_url"' \
+        | grep 'sha256sums\.txt"' | head -1 \
+        | sed 's/.*"browser_download_url"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
+
     if [ "$PKG_MGR" = "apk" ]; then
         [ -z "$SSCLASH_APK_URL" ] && die "Не найден .apk в assets релиза SSClash"
         info "Пакет: ${B}${SSCLASH_APK_URL##*/}${N}"
@@ -223,18 +270,20 @@ install_ssclash() {
     log "Загрузка luci-app-ssclash v${SSCLASH_VER}..."
 
     if [ "$PKG_MGR" = "apk" ]; then
-        PKG_FILE="/tmp/luci-app-ssclash.apk"
-        curl -L "$SSCLASH_APK_URL" -o "$PKG_FILE" || die "Ошибка загрузки .apk"
+        PKG_FILE="/tmp/${SSCLASH_APK_URL##*/}"
+        download_file "$SSCLASH_APK_URL" "$PKG_FILE" || die "Ошибка загрузки .apk"
+        verify_sha256_file "$PKG_FILE" "$SSCLASH_SHA256_URL"
         log "Установка пакета..."
         apk add --allow-untrusted "$PKG_FILE" || die "Ошибка установки .apk"
-        rm -f /tmp/*.apk
     else
-        PKG_FILE="/tmp/luci-app-ssclash.ipk"
-        curl -L "$SSCLASH_IPK_URL" -o "$PKG_FILE" || die "Ошибка загрузки .ipk"
+        PKG_FILE="/tmp/${SSCLASH_IPK_URL##*/}"
+        download_file "$SSCLASH_IPK_URL" "$PKG_FILE" || die "Ошибка загрузки .ipk"
+        verify_sha256_file "$PKG_FILE" "$SSCLASH_SHA256_URL"
         log "Установка пакета..."
-        (cd /tmp && opkg install luci-app-ssclash.ipk) || die "Ошибка установки .ipk"
-        rm -f /tmp/*.ipk
+        opkg install "$PKG_FILE" || die "Ошибка установки .ipk"
     fi
+
+    rm -f "$PKG_FILE"
 }
 
 # ================================================================
@@ -248,19 +297,28 @@ install_mihomo() {
     fi
 
     log "Определяю последнюю версию mihomo..."
-    MIHOMO_VER=$(curl -s -L "${MIHOMO_BASE}/latest" \
-        | grep "title>Release" | head -1 | cut -d " " -f 4 | tr -d '\r\n')
+    MIHOMO_JSON=$(curl -fsSL --retry 3 --connect-timeout 15 --max-time 60 "$MIHOMO_API") \
+        || die "Не удалось получить данные релиза mihomo"
+
+    MIHOMO_VER=$(printf '%s' "$MIHOMO_JSON" \
+        | grep '"tag_name"' | head -1 \
+        | sed 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
 
     if [ -z "$MIHOMO_VER" ]; then
         die "Не удалось получить версию mihomo. Проверь интернет-соединение."
     fi
     info "Последняя версия mihomo: ${B}${MIHOMO_VER}${N}"
 
-    MIHOMO_URL="${MIHOMO_BASE}/download/${MIHOMO_VER}/mihomo-linux-${MIHOMO_ARCH}-${MIHOMO_VER}.gz"
+    MIHOMO_URL=$(printf '%s' "$MIHOMO_JSON" \
+        | grep '"browser_download_url"' \
+        | grep "mihomo-linux-${MIHOMO_ARCH}-${MIHOMO_VER}\.gz\"" | head -1 \
+        | sed 's/.*"browser_download_url"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
+
+    [ -z "$MIHOMO_URL" ] && die "Не найдено ядро mihomo для архитектуры ${MIHOMO_ARCH}"
     info "URL: ${MIHOMO_URL}"
 
     log "Загрузка ядра mihomo..."
-    curl -L "$MIHOMO_URL" -o /tmp/clash.gz || die "Ошибка загрузки ядра mihomo"
+    download_file "$MIHOMO_URL" /tmp/clash.gz || die "Ошибка загрузки ядра mihomo"
 
     log "Распаковка в ${CLASH_BIN}..."
     mkdir -p "$(dirname "$CLASH_BIN")"

@@ -810,9 +810,14 @@ async function downloadMihomoKernel(downloadUrl, version, arch) {
 
         await fs.exec('rm', ['-f', downloadPath, extractedFile]).catch(function() {});
 
-        const curlResult = await fs.exec('curl', ['-fL', '--retry', '2', '--connect-timeout', '15', downloadUrl, '-o', downloadPath]);
+        const curlResult = await fs.exec('curl', ['-fL', '--retry', '3', '--connect-timeout', '15', '--max-time', '180', downloadUrl, '-o', downloadPath]);
         if (curlResult.code !== 0) {
             throw new Error(_('Download failed: %s').format((curlResult.stderr || '').trim() || _('unknown error')));
+        }
+
+        const downloadedStat = await L.resolveDefault(fs.stat(downloadPath), null);
+        if (!downloadedStat || !downloadedStat.size) {
+            throw new Error(_('Downloaded file is empty'));
         }
 
         const extractResult = await fs.exec('gzip', ['-df', downloadPath]);
