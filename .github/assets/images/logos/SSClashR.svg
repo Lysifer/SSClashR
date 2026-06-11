@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Super Simple ClashR">
+  <defs>
+    <linearGradient id="shield" x1="96" y1="40" x2="416" y2="362" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1f3b73"/>
+      <stop offset="0.52" stop-color="#21c6d8"/>
+      <stop offset="1" stop-color="#0b7ea0"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="242" y1="116" x2="310" y2="315" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff176"/>
+      <stop offset="0.42" stop-color="#ffb300"/>
+      <stop offset="1" stop-color="#ff5f00"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="#2b0038"/>
+  <path fill="url(#shield)" stroke="#b9f6ff" stroke-width="6" d="M256 38 404 102v152c0 87-59 147-148 176-89-29-148-89-148-176V102L256 38Z"/>
+  <path fill="#071a33" d="M256 72 372 122v126c0 69-45 116-116 141-71-25-116-72-116-141V122l116-50Z"/>
+  <text x="205" y="242" text-anchor="middle" font-family="Segoe UI Black, Arial Black, Arial, sans-serif" font-size="92" font-weight="900" fill="#d8fbff">S</text>
+  <text x="307" y="242" text-anchor="middle" font-family="Segoe UI Black, Arial Black, Arial, sans-serif" font-size="92" font-weight="900" fill="#d8fbff">S</text>
+  <path fill="url(#flame)" d="M258 116c28 48-27 74 12 124 16 21 8 49-21 70 73-14 91-80 52-131-18 32-32 29-37 8-4-18 9-42-6-71Z"/>
+  <path fill="#fffde7" d="M254 221c13 22-13 33 6 56 7 9 4 22-9 32 34-8 42-39 24-63-8 15-15 13-17 4-2-8 4-19-4-29Z"/>
+  <text x="161" y="448" text-anchor="middle" font-family="Segoe UI Black, Arial Black, Arial, sans-serif" font-size="38" font-weight="900" fill="#28c8d8">Super Simple</text>
+  <text x="398" y="448" text-anchor="middle" font-family="Segoe UI Black, Arial Black, Arial, sans-serif" font-size="40" font-weight="900" fill="#ff6b00">ClashR</text>
+</svg>

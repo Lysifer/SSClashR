@@ -1,3 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-  <path fill-rule="evenodd" d="M11.622 1.602a.75.75 0 0 1 .756 0l2.25 1.313a.75.75 0 0 1-.756 1.295L12 3.118 10.128 4.21a.75.75 0 1 1-.756-1.295l2.25-1.313ZM5.898 5.81a.75.75 0 0 1-.27 1.025l-1.14.665 1.14.665a.75.75 0 1 1-.756 1.295L3.75 8.806v.944a.75.75 0 0 1-1.5 0V7.5a.75.75 0 0 1 .372-.648l2.25-1.312a.75.75 0 0 1 1.026.27Zm12.204 0a.75.75 0 0 1 1.026-.27l2.25 1.312a.75.75 0 0 1 .372.648v2.25a.75.75 0 0 1-1.5 0v-.944l-1.122.654a.75.75 0 1 1-.756-1.295l1.14-.665-1.14-.665a.75.75 0 0 1-.27-1.025Zm-9 5.25a.75.75 0 0 1 1.026-.27L12 11.882l1.872-1.092a.75.75 0 1 1 .756 1.295l-1.878 1.096V15a.75.75 0 0 1-1.5 0v-1.82l-1.878-1.095a.75.75 0 0 1-.27-1.025ZM3 13.5a.75.75 0 0 1 .75.75v1.82l1.878 1.095a.75.75 0 1 1-.756 1.295l-2.25-1.312a.75.75 0 0 1-.372-.648v-2.25A.75.75 0 0 1 3 13.5Zm18 0a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-.372.648l-2.25 1.312a.75.75 0 1 1-.756-1.295l1.878-1.096V14.25a.75.75 0 0 1 .75-.75Zm-9 5.25a.75.75 0 0 1 .75.75v.944l1.122-.654a.75.75 0 1 1 .756 1.295l-2.25 1.313a.75.75 0 0 1-.756 0l-2.25-1.313a.75.75 0 1 1 .756-1.295l1.122.654V19.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SSClashR">
+  <defs>
+    <linearGradient id="shield" x1="8" y1="10" x2="56" y2="54" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1f3b73"/>
+      <stop offset="0.52" stop-color="#21c6d8"/>
+      <stop offset="1" stop-color="#0b7ea0"/>
+    </linearGradient>
+    <linearGradient id="flame" x1="30" y1="22" x2="40" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff176"/>
+      <stop offset="0.42" stop-color="#ffb300"/>
+      <stop offset="1" stop-color="#ff5f00"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#shield)" d="M32 5 54 15v17c0 13.6-8.9 22.8-22 27-13.1-4.2-22-13.4-22-27V15L32 5Z"/>
+  <path fill="#071a33" fill-opacity=".35" d="M32 9 14 17v15c0 10.9 6.8 18.7 18 22.5C43.2 50.7 50 42.9 50 32V17L32 9Z"/>
+  <path fill="none" stroke="#d8fbff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M24 22h-5.5c-4.7 0-6.4 5.9-2.4 8.4l10.2 6.3c4 2.5 2.3 8.3-2.4 8.3H16"/>
+  <path fill="none" stroke="#d8fbff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M44 22h-5.5c-4.7 0-6.4 5.9-2.4 8.4l10.2 6.3c4 2.5 2.3 8.3-2.4 8.3H36"/>
+  <path fill="url(#flame)" d="M32 19c3.8 6.7-3.2 8.8 2.9 14.4 2.2 2 2.8 5.8-.4 9.8 7.9-3.5 10.3-10.5 4.3-17.1-2.1 4-3.6 3.7-4.2 1.1-.5-2.2.5-5.2-2.6-8.2Z"/>
+  <path fill="#fffde7" d="M31.2 31.3c2 3.3-1.5 4.4 1.5 7.1 1.1 1 1.3 2.6-.3 4.6 3.9-1.7 5-5.1 2.1-8.3-1 1.8-1.8 1.7-2.1.5-.2-1 .3-2.4-1.2-3.9Z"/>
+  <circle cx="48" cy="48" r="12" fill="#ff6b00"/>
+  <text x="48" y="53" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="800" fill="#ffffff">R</text>
 </svg>
