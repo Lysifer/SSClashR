@@ -3,10 +3,10 @@
 #  SSClash Auto-Installer for OpenWrt
 #  Поддерживаемые версии: 21.x / 23.05.x / 24.10.x / 25.12.x
 #  Архитектуры: arm64, armhf, mipsel_24kc, mips_24kc, amd64
-#  https://github.com/zerolabnet/SSClash
+#  https://github.com/Lysifer/SSClashR
 # ================================================================
 
-SSCLASH_API="https://api.github.com/repos/zerolabnet/SSClash/releases/latest"
+SSCLASH_API="https://api.github.com/repos/Lysifer/SSClashR/releases/latest"
 MIHOMO_BASE="https://github.com/MetaCubeX/mihomo/releases"
 CLASH_BIN="/opt/clash/bin/clash"
 

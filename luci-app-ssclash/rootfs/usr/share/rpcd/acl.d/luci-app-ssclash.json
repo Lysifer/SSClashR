@@ -19,12 +19,7 @@
                 "/sbin/logread": [ "exec" ],
                 "/bin/ls": [ "exec" ],
                 "/sbin/ip": [ "exec" ],
-                "/usr/sbin/brctl": [ "exec" ],
-                "/bin/sh": [ "exec" ],
-                "/bin/cat": [ "exec" ],
-                "/usr/bin/tr": [ "exec" ],
-                "/usr/bin/md5sum": [ "exec" ],
-                "/usr/bin/cut": [ "exec" ]
+                "/usr/sbin/brctl": [ "exec" ]
             },
             "ubus": {
                 "file": [ "read", "stat", "exec" ],

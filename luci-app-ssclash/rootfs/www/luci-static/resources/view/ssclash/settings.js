@@ -163,31 +163,26 @@ async function getHwidValues() {
     try {
         let hwid = 'unknown';
         try {
-            const macResult = await fs.exec('/bin/sh', ['-c',
-                "cat /sys/class/net/eth0/address 2>/dev/null | tr -d ':' | md5sum | cut -c1-14"
-            ]);
-            if (macResult.code === 0 && macResult.stdout) {
-                hwid = macResult.stdout.trim();
+            const mac = await fs.read('/sys/class/net/eth0/address');
+            if (mac) {
+                hwid = shortHash(mac.trim().replace(/:/g, '').toLowerCase());
             }
         } catch (e) {}
 
         let verOs = 'unknown';
         try {
-            const verResult = await fs.exec('/bin/sh', ['-c',
-                ". /etc/openwrt_release && echo $DISTRIB_RELEASE"
-            ]);
-            if (verResult.code === 0 && verResult.stdout) {
-                verOs = verResult.stdout.trim();
+            const releaseInfo = await fs.read('/etc/openwrt_release');
+            const releaseMatch = releaseInfo && releaseInfo.match(/^DISTRIB_RELEASE=['"]?([^'"\n]+)['"]?/m);
+            if (releaseMatch) {
+                verOs = releaseMatch[1].trim();
             }
         } catch (e) {}
 
         let deviceModel = 'Router';
         try {
-            const modelResult = await fs.exec('/bin/sh', ['-c',
-                "cat /tmp/sysinfo/model 2>/dev/null"
-            ]);
-            if (modelResult.code === 0 && modelResult.stdout) {
-                deviceModel = modelResult.stdout.trim();
+            const model = await fs.read('/tmp/sysinfo/model');
+            if (model) {
+                deviceModel = model.trim();
             }
         } catch (e) {}
 
@@ -199,6 +194,17 @@ async function getHwidValues() {
             deviceModel: 'Router'
         };
     }
+}
+
+function shortHash(value) {
+    let hash = 0x811c9dc5;
+
+    for (let i = 0; i < value.length; i++) {
+        hash ^= value.charCodeAt(i);
+        hash = Math.imul(hash, 0x01000193) >>> 0;
+    }
+
+    return hash.toString(16).padStart(8, '0') + value.slice(-6);
 }
 
 function addHwidToYaml(yamlContent, userAgent, deviceOS, hwid, verOs, deviceModel) {

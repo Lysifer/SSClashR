@@ -173,7 +173,7 @@ async function initializeAceEditor(content) {
 // Keep in sync with luci-app-ssclash/Makefile PKG_VERSION
 const SSCLASH_VERSION = '4.5.2';
 
-const SSCLASH_REPO = 'zerolabnet/SSClash';
+const SSCLASH_REPO = 'Lysifer/SSClashR';
 const SSCLASH_RELEASES_URL = 'https://github.com/' + SSCLASH_REPO + '/releases';
 const SSCLASH_LATEST_API  = 'https://api.github.com/repos/' + SSCLASH_REPO + '/releases/latest';
 const SSCLASH_AUTHOR_URL  = 'https://zerolab.net';
